@@ -13,7 +13,7 @@ class CreateSmsTask extends Migration
      */
     public function up()
     {
-        Schema::create('sms_task', function (Blueprint $table) {
+        Schema::create('sms_tasks', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id')->comment('任务创建人');
             $table->string('title', 30)->comment('任务名称');
@@ -31,7 +31,7 @@ class CreateSmsTask extends Migration
             $table->softDeletes();
         });
 
-        \Illuminate\Support\Facades\DB::statement("ALTER TABLE `sms_task` comment '短信任务表'");
+        \Illuminate\Support\Facades\DB::statement("ALTER TABLE `sms_tasks` comment '短信任务表'");
     }
 
     /**
@@ -41,6 +41,6 @@ class CreateSmsTask extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sms_task');
+        Schema::dropIfExists('sms_tasks');
     }
 }

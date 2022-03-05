@@ -13,7 +13,7 @@ class CreateSmsTemplate extends Migration
      */
     public function up()
     {
-        Schema::create('sms_template', function (Blueprint $table) {
+        Schema::create('sms_templates', function (Blueprint $table) {
             $table->id();
             $table->integer('user_id')->comment('模板创建人');
             $table->string('title', 30)->comment('模板名称');
@@ -31,6 +31,6 @@ class CreateSmsTemplate extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sms_template');
+        Schema::dropIfExists('sms_templates');
     }
 }

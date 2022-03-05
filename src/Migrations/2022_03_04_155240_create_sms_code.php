@@ -13,7 +13,7 @@ class CreateSmsCode extends Migration
      */
     public function up()
     {
-        Schema::create('sms_code', function (Blueprint $table) {
+        Schema::create('sms_codes', function (Blueprint $table) {
             $table->id();
             $table->char('key')->comment('标记 用户验证发送次数');
             $table->char('scene')->comment('场景 发送验证码的场景');
@@ -26,7 +26,7 @@ class CreateSmsCode extends Migration
             $table->index('key');
         });
 
-        \Illuminate\Support\Facades\DB::statement("ALTER TABLE `sms_code` comment '发送短信验证码记录表'");
+        \Illuminate\Support\Facades\DB::statement("ALTER TABLE `sms_codes` comment '发送短信验证码记录表'");
     }
 
     /**
@@ -36,6 +36,6 @@ class CreateSmsCode extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sms_code');
+        Schema::dropIfExists('sms_codes');
     }
 }

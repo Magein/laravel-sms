@@ -13,7 +13,7 @@ class CreateSmsQueueHistory extends Migration
      */
     public function up()
     {
-        Schema::create('sms_queue_history', function (Blueprint $table) {
+        Schema::create('sms_queue_histories', function (Blueprint $table) {
             $table->id();
             $table->integer('task_id')->comment('任务ID');
             $table->char('phone', 11)->comment('手机号码');
@@ -26,7 +26,7 @@ class CreateSmsQueueHistory extends Migration
             $table->softDeletes();
         });
 
-        \Illuminate\Support\Facades\DB::statement("ALTER TABLE `sms_queue_history` comment '待发短信队列历史记录表'");
+        \Illuminate\Support\Facades\DB::statement("ALTER TABLE `sms_queue_histories` comment '待发短信队列历史记录表'");
     }
 
     /**
@@ -36,6 +36,6 @@ class CreateSmsQueueHistory extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sms_queue_history');
+        Schema::dropIfExists('sms_queue_histories');
     }
 }

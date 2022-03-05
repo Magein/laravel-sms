@@ -13,7 +13,7 @@ class CreateSmsQueue extends Migration
      */
     public function up()
     {
-        Schema::create('sms_queue', function (Blueprint $table) {
+        Schema::create('sms_queues', function (Blueprint $table) {
             $table->id();
             $table->integer('task_id')->comment('任务ID');
             $table->char('phone', 11)->comment('手机号码');
@@ -26,7 +26,7 @@ class CreateSmsQueue extends Migration
             $table->softDeletes();
         });
 
-        \Illuminate\Support\Facades\DB::statement("ALTER TABLE `sms_queue` comment '待发短信队列表'");
+        \Illuminate\Support\Facades\DB::statement("ALTER TABLE `sms_queues` comment '待发短信队列表'");
     }
 
 
@@ -37,6 +37,6 @@ class CreateSmsQueue extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sms_queue');
+        Schema::dropIfExists('sms_queues');
     }
 }
