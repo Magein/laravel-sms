@@ -19,11 +19,6 @@ $providers=[
     // 此处省略其他的服务提供者
     Magein\Sms\SmsServiceProvider::class
 ];
-
-$aliases=[
-    // 此处省略其他的facades
-    'Sms' => Magein\Sms\Facades\Sms::class,
-];
 ```
 
 ### 发送 && 验证
