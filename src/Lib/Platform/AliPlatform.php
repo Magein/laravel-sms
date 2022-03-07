@@ -5,7 +5,7 @@ namespace Magein\Sms\Lib\Platform;
 use AlibabaCloud\SDK\Dysmsapi\V20170525\Dysmsapi;
 use AlibabaCloud\SDK\Dysmsapi\V20170525\Models\SendSmsRequest;
 use AlibabaCloud\Tea\Exception\TeaUnableRetryError;
-use App\Common\Sms\lib\SmsResult;
+use Magein\Sms\Lib\SmsResult;
 use Darabonba\OpenApi\Models\Config;
 
 class AliPlatform extends SmsPlatform
