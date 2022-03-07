@@ -3,6 +3,7 @@
 namespace Magein\Sms;
 
 use Illuminate\Support\ServiceProvider;
+use Magein\Sms\Lib\Sms;
 
 class SmsServiceProvider extends ServiceProvider
 {
@@ -19,6 +20,10 @@ class SmsServiceProvider extends ServiceProvider
         }
 
         $this->mergeConfigFrom(__DIR__ . '/Config.php', 'sms');
+
+        $this->app->bind('sms', function () {
+            return new Sms();
+        });
     }
 
     /**
