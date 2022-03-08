@@ -8,10 +8,8 @@ use Magein\Sms\Lib\SmsResult;
 /**
  * @method static $this  platform(string $platform)
  * @method static SmsResult  send($phone, string $message, array $replace = [])
- * @method static SmsResult  code($phone)
- * @method static SmsResult login($phone)
- * @method static SmsResult register($phone)
- * @method static SmsResult findPass($phone)
+ * @method static SmsResult  code(string $phone = '')
+ * @method static SmsResult  validate(string $phone = '', $code = '', string $scene = '')
  */
 class Sms extends Facade
 {

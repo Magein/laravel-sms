@@ -2,7 +2,11 @@
 
 namespace Magein\Sms\Lib;
 
+use Darabonba\GatewaySpi\Models\InterceptorContext\request;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Session;
 use Magein\Sms\Lib\Platform\SmsPlatform;
+use magein\tools\common\RegVerify;
 use function config;
 
 class Sms
@@ -50,45 +54,13 @@ class Sms
      * @param $phone
      * @return SmsResult
      */
-    public function code($phone)
+    public function code($phone = '', $scene = SmsCode::SCENE_VERIFY_PHONE)
     {
-        return $this->replaceCodeTemplate($phone, 'normal');
-    }
-
-    /**
-     * @param $phone
-     * @return SmsResult|mixed
-     */
-    public function login($phone)
-    {
-        return $this->replaceCodeTemplate($phone, 'login');
-    }
-
-    /**
-     * @param $phone
-     * @return SmsResult|mixed
-     */
-    public function register($phone)
-    {
-        return $this->replaceCodeTemplate($phone, 'register');
-    }
-
-    /**
-     * @param $phone
-     * @return SmsResult|mixed
-     */
-    public function findPass($phone)
-    {
-        return $this->replaceCodeTemplate($phone, 'find_pass');
-    }
-
-    /**
-     * @param $phone
-     * @param string $scene 场景
-     * @return SmsResult|mixed
-     */
-    private function replaceCodeTemplate($phone, string $scene = '')
-    {
+        $phone = $phone ?: request()->input('phone');
+        if (empty($phone) || !RegVerify::phone($phone)) {
+            return new SmsResult(1, '手机号码错误');
+        }
+        
         $code = (new SmsCode())->make($phone, $scene);
         $template = config('sms.code.scene.' . $scene);
         if (empty($template)) {
@@ -101,5 +73,16 @@ class Sms
             'expired_at' => $expired_at,
         ];
         return $this->send($phone, $message, $replace);
+    }
+
+    /**
+     * @param $phone
+     * @param $code
+     * @param $scene
+     * @return SmsResult
+     */
+    public function validate($phone = '', $code = '', $scene = SmsCode::SCENE_VERIFY_PHONE)
+    {
+        return (new SmsCode())->validate($scene, $phone, $code);
     }
 }

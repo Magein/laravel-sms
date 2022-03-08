@@ -3,8 +3,14 @@
 return [
 
     'default' => [
-        // 使用的驱动，支持 db、redis、session，默认db
-        'driver' => 'db',
+        /**
+         * 使用的驱动
+         * 支持 db、cache、redis
+         * db：保存到sms_codes表中
+         * redis：指定使用redis，cache默认使用文件，但是验证码想用redis驱动的情况
+         * cache: 使用laravel的缓存系统
+         */
+        'driver' => 'cache',
         // 发送短信使用的平台
         'platform' => \Magein\Sms\Lib\Platform\AliPlatform::class,
         // 短信签名

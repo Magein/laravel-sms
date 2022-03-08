@@ -15,7 +15,7 @@ class CreateSmsCodeHistory extends Migration
     {
         Schema::create('sms_code_histories', function (Blueprint $table) {
             $table->id();
-            $table->char('key')->comment('标记 用户验证发送次数');
+            $table->char('key')->comment('标记');
             $table->char('scene')->comment('场景 发送验证码的场景');
             $table->char('phone')->comment('手机号码');
             $table->char('code')->comment('验证码');

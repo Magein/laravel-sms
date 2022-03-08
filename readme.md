@@ -19,6 +19,11 @@ $providers=[
     // 此处省略其他的服务提供者
     Magein\Sms\SmsServiceProvider::class
 ];
+
+$aliases=[
+    // 此处省略其他的facades
+    'Sms' => Magein\Sms\Facades\Sms::class,
+];
 ```
 
 ### 发送 && 验证
@@ -26,9 +31,9 @@ $providers=[
 ```php
 // 发送验证码
 Magein\Sms\Facades\Sms::code($phone);
-Magein\Sms\Facades\Sms::login($phone);
-Magein\Sms\Facades\Sms::register($phone);
-Magein\Sms\Facades\Sms::findPass($phone);
+Magein\Sms\Facades\Sms::code($phone,\Magein\Sms\Lib\SmsCode::SCENE_LOGIN);
+Magein\Sms\Facades\Sms::code($phone,\Magein\Sms\Lib\SmsCode::SCENE_REGISTER);
+Magein\Sms\Facades\Sms::code($phone,\Magein\Sms\Lib\SmsCode::SCENE_FINDPASS);
 // 发送短信 手机号码 短信内容 内容里面的变量
 Magein\Sms\Facades\Sms::send($phone,$message,$replace);
 
@@ -36,11 +41,11 @@ Magein\Sms\Facades\Sms::send($phone,$message,$replace);
 Magein\Sms\Facades\Sms::platform(\Magein\Sms\Lib\Platform\AliPlatform::class)->send();
 
 // 不传递参数将从自动使用request()->input('phone');request()->input('code')
-\Magein\Sms\Lib\SmsCode::validate();
+Magein\Sms\Facades\Sms::validate();
 // 传递场景值(login、register、findPass)等场景,phone、code自动获取
-\Magein\Sms\Lib\SmsCode::validate($scene);
+Magein\Sms\Facades\Sms::validate($scene);
 // 传递全部参数
-\Magein\Sms\Lib\SmsCode::validate($scene,$phone,$code);
+Magein\Sms\Facades\Sms::validate($scene,$phone,$code);
 
 ```
 
@@ -101,14 +106,9 @@ response
 {
     code:0,
     msg:'发送成功',
-    data:{
-       code:0, // 实际发送的结果
-       error:'' // 原因
-    }
+    data:null
 }
 ```
-
-> code始终为0，原因是不管是短信欠费，或者是其他原因，给用户的的反馈就是发送了，data中是实际的发送结果，如果需要请使用data中的参数判断
 
 ### 批量发送
 
@@ -122,6 +122,7 @@ response
 4. 发送结果可监控（在项目中，而不是去登录运营商平台）
 
 提供的函数
+
 ```php
 // 提取手机号码,可以传递字符串，可以传递一个文件
 readPhoneNumbers($filepath);
