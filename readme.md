@@ -29,6 +29,13 @@ $aliases=[
 ### 发送 && 验证
 
 ```php
+
+
+// 跨域问题请在config/cors.php中添加
+[
+    'paths' => ['api/*', 'admin/*', 'view/*', 'sms/*'],
+]
+
 // 发送验证码
 Magein\Sms\Facades\Sms::code($phone);
 Magein\Sms\Facades\Sms::code($phone,\Magein\Sms\Lib\SmsCode::SCENE_LOGIN);
