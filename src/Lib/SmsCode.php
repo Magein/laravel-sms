@@ -51,7 +51,7 @@ class SmsCode
         if (empty($code)) {
             return new SmsResult(1, '请输入验证码');
         }
-        
+
         $driver = config('sms.default.driver');
         $key = $this->key($phone, $scene);
         if ($driver == 'db') {

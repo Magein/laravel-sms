@@ -2,9 +2,6 @@
 
 namespace Magein\Sms\Lib;
 
-use Darabonba\GatewaySpi\Models\InterceptorContext\request;
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Session;
 use Magein\Sms\Lib\Platform\SmsPlatform;
 use magein\tools\common\RegVerify;
 use function config;
@@ -60,7 +57,7 @@ class Sms
         if (empty($phone) || !RegVerify::phone($phone)) {
             return new SmsResult(1, '手机号码错误');
         }
-        
+
         $code = (new SmsCode())->make($phone, $scene);
         $template = config('sms.code.scene.' . $scene);
         if (empty($template)) {
