@@ -1,9 +1,9 @@
 {
   "name": "magein/laravel-sms",
-  "description": "laravel框架集成的短信功能",
+  "description": "laravel框架扩展的短信功能",
   "keywords": [
     "laravel",
-    "tools"
+    "sms"
   ],
   "homepage": "https://github.com/magein/laravel-sms",
   "autoload": {
