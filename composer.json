@@ -22,7 +22,8 @@
     "php": "^7.4|^8.0",
     "ext-json": "*",
     "laravel/framework": "~8.54",
-    "alibabacloud/darabonba-openapi": "^0.2.5",
+    "magein/tools": "*@dev",
+    "alibabacloud/darabonba-openapi": "~0.2.5",
     "alibabacloud/dysmsapi-20170525": "2.0.9"
   }
 }

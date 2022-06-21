@@ -5,7 +5,7 @@ namespace Magein\Sms\Lib\Platform;
 use AlibabaCloud\SDK\Dysmsapi\V20170525\Dysmsapi;
 use AlibabaCloud\SDK\Dysmsapi\V20170525\Models\SendSmsRequest;
 use AlibabaCloud\Tea\Exception\TeaUnableRetryError;
-use Magein\Sms\Lib\SmsResult;
+use Magein\Sms\Lib\SmsOutput;
 use Darabonba\OpenApi\Models\Config;
 
 class AliPlatform extends SmsPlatform
@@ -13,7 +13,7 @@ class AliPlatform extends SmsPlatform
     /**
      * @var string
      */
-    protected $template_code = '';
+    protected string $template_code = '';
 
     /**
      * @return string
@@ -35,7 +35,7 @@ class AliPlatform extends SmsPlatform
     /**
      * @return Dysmsapi
      */
-    private function client()
+    private function client(): Dysmsapi
     {
         $sms_config = config('sms.ali');
         $config = new Config([
@@ -57,9 +57,9 @@ class AliPlatform extends SmsPlatform
      * @param $phone
      * @param $message
      * @param $replace
-     * @return SmsResult
+     * @return SmsOutput
      */
-    public function send($phone, $message, $replace = [])
+    public function send($phone, $message, $replace = []): SmsOutput
     {
         $signature = config('sms.ali.signature') ?: config('sms.ali.default');
 
@@ -76,7 +76,6 @@ class AliPlatform extends SmsPlatform
                 if ($value) {
                     $message .= "$item:$value,";
                 }
-
             }
         }
 
@@ -95,12 +94,12 @@ class AliPlatform extends SmsPlatform
             $response = $this->client()->sendSms($request);
             $body = $response->body->toMap();
             if ($body['Code'] != 'ok') {
-                $result = new SmsResult(1, $body['Message']);
+                $result = new SmsOutput($body['Message']);
             } else {
-                $result = new SmsResult(0);
+                $result = SmsOutput::success($body);
             }
         } catch (TeaUnableRetryError $exception) {
-            $result = new SmsResult(1, $exception->getCode());
+            $result = new SmsOutput('阿里云发送失败：' . $exception->getMessage(), $exception->getCode());
         }
 
         return $result;

@@ -11,13 +11,13 @@ class Sms
     /**
      * @var string
      */
-    private $platform = '';
+    private string $platform = '';
 
     /**
      * @param string $platform
-     * @return $this
+     * @return \Magein\Sms\Lib\Sms
      */
-    public function platform(string $platform)
+    public function platform(string $platform): Sms
     {
         $this->platform = $platform;
 
@@ -28,9 +28,9 @@ class Sms
      * @param string|int $phone 手机号码
      * @param string $message 短信内容  变量的格式 ${string}
      * @param array $replace 短信内容中需要替换的变量
-     * @return SmsResult|mixed
+     * @return SmsOutput
      */
-    public function send($phone, string $message, array $replace = [])
+    public function send($phone, string $message, array $replace = []): SmsOutput
     {
         $platform = $this->platform ?: config('sms.default.platform');
 
@@ -41,29 +41,30 @@ class Sms
         }
 
         if (empty($platform) || !$platform instanceof SmsPlatform) {
-            return new SmsResult(1, '短信平台异常');
+            return new SmsOutput('初始化短信平台异常');
         }
 
         return $platform->send($phone, $message, $replace);
     }
 
     /**
-     * @param $phone
-     * @return SmsResult
+     * @param string $phone
+     * @param string $scene
+     * @return \Magein\Sms\Lib\SmsOutput
      */
-    public function code($phone = '', $scene = SmsCode::SCENE_VERIFY_PHONE)
+    public function code(string $phone = '', string $scene = SmsCode::SCENE_VERIFY_PHONE): SmsOutput
     {
         $phone = $phone ?: request()->input('phone');
         if (empty($phone) || !RegVerify::phone($phone)) {
-            return new SmsResult(1, '手机号码错误');
+            return new SmsOutput('手机号码错误');
         }
 
+        $config = config('sms.code');
+        $scene = $scene ?: SmsCode::SCENE_VERIFY_PHONE;
+        $template = $config['scene'][$scene] ?: $config['scene'][SmsCode::SCENE_VERIFY_PHONE];
+        $expired_at = $config['expired_at'] ?? 1800;
+
         $code = (new SmsCode())->make($phone, $scene);
-        $template = config('sms.code.scene.' . $scene);
-        if (empty($template)) {
-            $template = config('sms.code.scene.normal');
-        }
-        $expired_at = config('sms.code.expired_at');
         $message = preg_replace(['/\${code}/', '/\${expired_at}/'], [$code, intval($expired_at / 60)], $template);
         $replace = [
             'code' => $code,
@@ -73,12 +74,12 @@ class Sms
     }
 
     /**
-     * @param $phone
-     * @param $code
-     * @param $scene
-     * @return SmsResult
+     * @param string $phone
+     * @param string $code
+     * @param string $scene
+     * @return SmsOutput
      */
-    public function validate($phone = '', $code = '', $scene = SmsCode::SCENE_VERIFY_PHONE)
+    public function validate(string $phone = '', string $code = '', string $scene = SmsCode::SCENE_VERIFY_PHONE): SmsOutput
     {
         return (new SmsCode())->validate($scene, $phone, $code);
     }

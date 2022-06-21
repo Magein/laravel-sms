@@ -36,7 +36,7 @@ if (!function_exists('readPhoneNumbers')) {
             $array = explode("\n", $data);
             if (is_array($array)) {
                 foreach ($array as $item) {
-                    preg_match_all('/[0-9]?/', $item, $matches);
+                    preg_match_all('/\d?/', $item, $matches);
                     $number = array_filter($matches[0] ?? [], function ($value) {
                         return !($value === '');
                     });
@@ -44,14 +44,14 @@ if (!function_exists('readPhoneNumbers')) {
                         continue;
                     }
                     $number = implode('', $number);
-                    if (!preg_match('/^1[0-9]{10}/', $number)) {
+                    if (!preg_match('/^1\d{10}/', $number)) {
                         continue;
                     }
                     $phones[] = $number;
                 }
             }
         } else {
-            preg_match_all('/1[0-9]{10}/', $filepath, $matches);
+            preg_match_all('/1\d{10}/', $filepath, $matches);
             $phones = $matches[0] ?? [];
         }
         return array_unique($phones);

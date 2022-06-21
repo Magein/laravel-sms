@@ -3,9 +3,10 @@
 namespace Magein\Sms;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Contracts\Support\DeferrableProvider;
 use Magein\Sms\Lib\Sms;
 
-class SmsServiceProvider extends ServiceProvider
+class SmsServiceProvider extends ServiceProvider implements DeferrableProvider
 {
     /**
      * Register services.
@@ -39,5 +40,10 @@ class SmsServiceProvider extends ServiceProvider
 
         // 加载数据库迁移文件
         $this->loadMigrationsFrom(__DIR__ . '/Migrations');
+    }
+
+    public function provides()
+    {
+        return ['sms'];
     }
 }

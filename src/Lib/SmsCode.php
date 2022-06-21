@@ -2,23 +2,22 @@
 
 namespace Magein\Sms\Lib;
 
-use Darabonba\GatewaySpi\Models\InterceptorContext\request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Date;
-use Illuminate\Support\Facades\Session;
+use Psr\SimpleCache\InvalidArgumentException;
 use function config;
 
 class SmsCode
 {
 
     // 验证手机号码
-    const SCENE_VERIFY_PHONE = 'verify_phone';
+    const SCENE_VERIFY_PHONE = 'verify';
     // 登录
     const SCENE_LOGIN = 'login';
     // 注册
     const SCENE_REGISTER = 'register';
     // 找回密码
-    const SCENE_FINDPASS = 'find_pass';
+    const SCENE_FIND_PASS = 'find_pass';
 
     /**
      * @param string|int $phone 手机号码
@@ -38,18 +37,24 @@ class SmsCode
         return $code;
     }
 
-    public function validate($scene = '', $phone = '', $code = '')
+    /**
+     * @param int|string $scene
+     * @param int|string $phone
+     * @param int|string $code
+     * @return \Magein\Sms\Lib\SmsOutput
+     */
+    public function validate($scene = '', $phone = '', $code = ''): SmsOutput
     {
-        $scene = $scene ?: self::SCENE_VERIFY;
+        $scene = $scene ?: self::SCENE_VERIFY_PHONE;
         $phone = $phone ?: request()->input('phone');
         $code = $code ?: request()->input('code');
 
         if (empty($phone)) {
-            return new SmsResult(1, '请输入手机号码');
+            return new SmsOutput('请输入手机号码');
         }
 
         if (empty($code)) {
-            return new SmsResult(1, '请输入验证码');
+            return new SmsOutput('请输入验证码');
         }
 
         $driver = config('sms.default.driver');
@@ -57,24 +62,28 @@ class SmsCode
         if ($driver == 'db') {
             $smsCode = \Magein\Sms\Models\SmsCode::where('key', md5($phone . $code . $scene))->first();
             if (empty($smsCode)) {
-                return new SmsResult(1, '验证码不正确');
+                return new SmsOutput('验证码不正确');
             }
             if (now()->timestamp > Date::parse($smsCode->expired_at)->timestamp) {
-                return new SmsResult(1, '验证码已经过期');
+                return new SmsOutput('验证码已经过期');
             }
             $res = $smsCode->code;
         } else {
-            $res = Cache::store($driver === 'redis' ? 'redis' : 'file')->get($key);
-            if (empty($res)) {
-                return new SmsResult(1, '验证码已经过期');
+            try {
+                $res = Cache::store($driver === 'redis' ? 'redis' : 'file')->get($key);
+                if (empty($res)) {
+                    return new SmsOutput('验证码已经过期');
+                }
+            } catch (InvalidArgumentException $exception) {
+                $res = '';
             }
         }
 
         if ($code != $res) {
-            return new SmsResult(1, '验证码不正确');
+            return new SmsOutput('验证码不正确');
         }
 
-        return new SmsResult();
+        return new SmsOutput(true);
     }
 
     /**

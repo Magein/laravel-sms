@@ -8,18 +8,18 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Request;
 use Magein\Sms\Facades\Sms;
 use Magein\Sms\Lib\SmsCode;
-use Magein\Sms\Lib\SmsResult;
+use Magein\Sms\Lib\SmsOutput;
 
 class SmsController
 {
     /**
      * 这里 code=0 表示发生正常发送
-     * @param SmsResult $result
+     * @param SmsOutput $output
      * @return Application|ResponseFactory|Response
      */
-    private function response(SmsResult $result)
+    private function response(SmsOutput $output)
     {
-        return response(['code' => $result->code(), 'msg' => $result->error(), 'data' => null]);
+        return response(['code' => $output->getCode(), 'msg' => $output->getMessage(), 'data' => $output->getData()]);
     }
 
     public function login(Request $request)
@@ -34,6 +34,6 @@ class SmsController
 
     public function findPass(Request $request)
     {
-        return $this->response(Sms::code($request::input('phone'), SmsCode::SCENE_FINDPASS));
+        return $this->response(Sms::code($request::input('phone'), SmsCode::SCENE_VERIFY_PHONE));
     }
 }

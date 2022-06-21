@@ -2,6 +2,8 @@
 
 namespace Magein\Sms\Lib\Platform;
 
+use Magein\Sms\Lib\SmsOutput;
+
 abstract class SmsPlatform
 {
     /**
@@ -14,7 +16,7 @@ abstract class SmsPlatform
      * @param $phone
      * @param string $message
      * @param array $replace
-     * @return mixed
+     * @return SmsOutput
      */
-    abstract public function send($phone, string $message, array $replace = []);
+    abstract public function send($phone, string $message, array $replace = []): SmsOutput;
 }
